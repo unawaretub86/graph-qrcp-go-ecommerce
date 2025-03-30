@@ -1,0 +1,46 @@
+syntax = "proto3";
+package pb;
+
+option go_package = "./";
+
+service Catalog {
+    rpc PostProduct(PostProductRequest) returns (PostProductResponse);
+    rpc GetProductByID(GetProductByIDRequest) returns (GetProductByIDResponse);
+    rpc GetProducts(GetProductsRequest) returns (GetProductsResponse);
+}
+
+message Product {
+    string id = 1;
+    string name = 2;
+    double price = 3;
+    string description = 4;
+}
+
+message PostProductRequest {
+    string name = 1;
+    double price = 2;
+    string description = 3;
+}
+
+message PostProductResponse {
+    Product Product = 1;
+}
+
+message GetProductByIDRequest {
+    string id = 1;
+}
+
+message GetProductByIDResponse {
+    Product Product = 1;
+}
+
+message GetProductsRequest {
+    uint64 skip = 1;
+    uint64 take = 2;
+    repeated string ids = 3;
+    string query = 4;
+}
+
+message GetProductsResponse {
+    repeated Product products = 1;
+}

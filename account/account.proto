@@ -39,11 +39,3 @@ message GetAccountsResponse {
     // Defines an array of Account objects. Used to return multiple accounts in the response
     repeated Account Accounts = 1;
 }
-
-message PotsAccountRequest {
-
-}
-
-message PotsAccountResponse {
-
-}
