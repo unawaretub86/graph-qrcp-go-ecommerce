@@ -4,10 +4,11 @@ import (
 	"log"
 	"time"
 
+	_ "github.com/lib/pq" 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/tinrab/retry"
 
-	account "github.com/unawaretub86/graph-qrcp-go-ecommerce/account"
+	"github.com/unawaretub86/graph-qrcp-go-ecommerce/account"
 )
 
 type Config struct {

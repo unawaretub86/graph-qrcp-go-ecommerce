@@ -5,7 +5,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	pb "github.com/unawaretub86/graph-qrcp-go-ecommerce/account/pb/account"
+	pb "github.com/unawaretub86/graph-qrcp-go-ecommerce/account/pb"
 )
 
 type Client struct {
@@ -53,4 +53,21 @@ func (c *Client) PostAccount(ctx context.Context, name string) (*Account, error)
 		ID:   r.Account.Id,
 		Name: r.Account.Name,
 	}, nil
+}
+
+func (c *Client) GetAccounts(ctx context.Context, take uint64, skip uint64) ([]*Account, error) {
+	r, err := c.Service.GetAccounts(ctx, &pb.GetAccountsRequest{Take: take, Skip: skip})
+	if err != nil {
+		return nil, err
+	}
+
+	accounts := []*Account{}
+	for _, a := range r.Accounts {
+		accounts = append(accounts, &Account{
+			ID:   a.Id,
+			Name: a.Name,
+		})
+	}
+
+	return accounts, nil
 }

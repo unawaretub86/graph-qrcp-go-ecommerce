@@ -8,10 +8,11 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	pb "github.com/unawaretub86/graph-qrcp-go-ecommerce/account/pb/account"
+	pb "github.com/unawaretub86/graph-qrcp-go-ecommerce/account/pb"
 )
 
 type grpcServer struct {
+	pb.UnimplementedAccountServiceServer
 	service Service
 }
 
@@ -22,7 +23,10 @@ func ListenGRPC(s Service, port int) error {
 	}
 
 	srv := grpc.NewServer()
-	pb.RegisterAccountServiceServer(srv, &grpcServer{s})
+	pb.RegisterAccountServiceServer(srv, &grpcServer{
+		UnimplementedAccountServiceServer: pb.UnimplementedAccountServiceServer{},
+		service:                           s,
+	})
 	reflection.Register(srv)
 
 	return srv.Serve(lis)

@@ -16,7 +16,7 @@ type AppConfig struct {
 }
 
 func main() {
-	var config AppConfig
+	config := AppConfig{}
 
 	err := envconfig.Process("", &config)
 	if err != nil {
