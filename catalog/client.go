@@ -1,6 +1,8 @@
 package catalog
 
 import (
+	"context"
+
 	"google.golang.org/grpc"
 
 	pb "github.com/unawaretub86/graph-qrcp-go-ecommerce/catalog/pb"
@@ -8,7 +10,7 @@ import (
 
 type Client struct {
 	conn    *grpc.ClientConn
-	Service pb.CatalogClient
+	Server pb.CatalogClient
 }
 
 func NewClient(url string) (*Client, error) {
@@ -19,10 +21,74 @@ func NewClient(url string) (*Client, error) {
 
 	return &Client{
 		conn:    conn,
-		Service: pb.NewCatalogClient(conn),
+		Server: pb.NewCatalogClient(conn),
 	}, nil
 }
 
 func (c *Client) Close() {
 	c.conn.Close()
+}
+
+func (c *Client) PostProduct(ctx context.Context, name, description string, price float64) (*Product, error) {
+	r, err := c.Server.PostProduct(
+		ctx,
+		&pb.PostProductRequest{
+			Name:        name,
+			Description: description,
+			Price:       price,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &Product{
+		ID:          r.Product.Id,
+		Name:        r.Product.Name,
+		Description: r.Product.Description,
+		Price:       r.Product.Price,
+	}, nil
+}
+
+func (c *Client) GetProduct(ctx context.Context, id string) (*Product, error) {
+	r, err := c.Server.GetProductByID(
+		ctx,
+		&pb.GetProductByIDRequest{
+			Id: id,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Product{
+		ID:          r.Product.Id,
+		Name:        r.Product.Name,
+		Description: r.Product.Description,
+		Price:       r.Product.Price,
+	}, nil
+}
+
+func (c *Client) GetProducts(ctx context.Context, skip uint64, take uint64, ids []string, query string) ([]Product, error) {
+	r, err := c.Server.GetProducts(
+		ctx,
+		&pb.GetProductsRequest{
+			Ids:   ids,
+			Skip:  skip,
+			Take:  take,
+			Query: query,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	products := []Product{}
+	for _, p := range r.Products {
+		products = append(products, Product{
+			ID:          p.Id,
+			Name:        p.Name,
+			Description: p.Description,
+			Price:       p.Price,
+		})
+	}
+	return products, nil
 }

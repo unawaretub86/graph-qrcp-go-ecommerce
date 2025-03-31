@@ -10,7 +10,7 @@ import (
 
 type Client struct {
 	conn    *grpc.ClientConn
-	Service pb.AccountServiceClient
+	Server pb.AccountServiceClient
 }
 
 func NewClient(url string) (*Client, error) {
@@ -21,7 +21,7 @@ func NewClient(url string) (*Client, error) {
 
 	return &Client{
 		conn:    conn,
-		Service: pb.NewAccountServiceClient(conn),
+		Server: pb.NewAccountServiceClient(conn),
 	}, nil
 }
 
@@ -30,7 +30,7 @@ func (c *Client) Close() {
 }
 
 func (c *Client) GetAccount(ctx context.Context, id string) (*Account, error) {
-	res, err := c.Service.GetAccount(ctx, &pb.GetAccountRequest{
+	res, err := c.Server.GetAccount(ctx, &pb.GetAccountRequest{
 		Id: id,
 	})
 	if err != nil {
@@ -44,7 +44,7 @@ func (c *Client) GetAccount(ctx context.Context, id string) (*Account, error) {
 }
 
 func (c *Client) PostAccount(ctx context.Context, name string) (*Account, error) {
-	r, err := c.Service.PostAccount(ctx, &pb.PostAccountRequest{Name: name})
+	r, err := c.Server.PostAccount(ctx, &pb.PostAccountRequest{Name: name})
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (c *Client) PostAccount(ctx context.Context, name string) (*Account, error)
 }
 
 func (c *Client) GetAccounts(ctx context.Context, take uint64, skip uint64) ([]*Account, error) {
-	r, err := c.Service.GetAccounts(ctx, &pb.GetAccountsRequest{Take: take, Skip: skip})
+	r, err := c.Server.GetAccounts(ctx, &pb.GetAccountsRequest{Take: take, Skip: skip})
 	if err != nil {
 		return nil, err
 	}
