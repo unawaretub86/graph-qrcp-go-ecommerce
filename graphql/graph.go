@@ -1,42 +1,51 @@
 package main
 
-import "github.com/99designs/gqlgen/graphql"
+import (
+	"github.com/99designs/gqlgen/graphql"
+
+	"github.com/unawaretub86/graph-qrcp-go-ecommerce/account"
+	"github.com/unawaretub86/graph-qrcp-go-ecommerce/catalog"
+	"github.com/unawaretub86/graph-qrcp-go-ecommerce/order"
+)
 
 type Server struct {
-	// accountClient *account.Client
-	// catalogClient *catalog.Client
-	// orderClient   *order.Client
+	accountClient *account.Client
+	catalogClient *catalog.Client
+	orderClient   *order.Client
+}
+
+type orderResolver struct {
+	*Server
 }
 
 func NewGraphQLServer(accountUrl, catalogUrl, orderUrl string) (*Server, error) {
-	// accountClient, err := account.NewClient(accountUrl)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	accountClient, err := account.NewClient(accountUrl)
+	if err != nil {
+		return nil, err
+	}
 
-	// catalogClient, err := catalog.NewClient(catalogUrl)
-	// if err != nil {
-	// 	accountClient.Close()
-	// 	return nil, err
-	// }
+	catalogClient, err := catalog.NewClient(catalogUrl)
+	if err != nil {
+		accountClient.Close()
+		return nil, err
+	}
 
-	// orderClient, err := order.NewClient(orderUrl)
-	// if err != nil {
-	// 	accountClient.Close()
-	// 	catalogClient.Close()
-	// 	return nil, err
-	// }
+	orderClient, err := order.NewClient(orderUrl)
+	if err != nil {
+		accountClient.Close()
+		catalogClient.Close()
+		return nil, err
+	}
 
 	return &Server{
-		// accountClient,
-		// catalogClient,
-		// orderClient,
+		accountClient,
+		catalogClient,
+		orderClient,
 	}, nil
 }
 
 func (s *Server) Mutation() MutationResolver {
-	// return &mutationResolver{s}
-	return nil
+	return &mutationResolver{s}
 }
 
 func (s *Server) Query() QueryResolver {
@@ -46,6 +55,7 @@ func (s *Server) Query() QueryResolver {
 func (s *Server) Account() AccountResolver {
 	return &accountResolver{s}
 }
+
 
 func (s *Server) ToExecutableSchema() graphql.ExecutableSchema {
 	return NewExecutableSchema(Config{Resolvers: s})

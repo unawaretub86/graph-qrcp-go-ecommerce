@@ -17,7 +17,7 @@ type Order struct {
 	ID         string            `json:"id"`
 	Products   []*OrderedProduct `json:"products"`
 	TotalPrice float64           `json:"totalPrice"`
-	CreatedAt  time.Time         `json:"CreatedAt"`
+	CreatedAt  time.Time         `json:"createdAt"`
 }
 
 type OrderInput struct {
@@ -33,7 +33,7 @@ type OrderProductInput struct {
 type OrderedProduct struct {
 	ID          string  `json:"id"`
 	Name        string  `json:"name"`
-	Description *string `json:"description,omitempty"`
+	Description string  `json:"description"`
 	Price       float64 `json:"price"`
 	Quantity    int     `json:"quantity"`
 }

@@ -1,13 +1,14 @@
-FROM golang:1.13-alpine3.11 AS build
+FROM golang:1.23-alpine AS build
 RUN apk --no-cache add gcc g++ make ca-certificates
-WORKDIR /go/src/github.com/unawaretub86/graph-qrcp-go-ecommerce
+WORKDIR /app
 COPY go.mod go.sum ./
-COPY vendor vendor
+RUN go mod download
 COPY catalog catalog
-RUN GO111MODULE=on go build -mod vendor -o /go/bin/app ./catalog/cmd
+RUN CGO_ENABLED=0 GOOS=linux go build -o /app/app ./catalog/cmd
 
-FROM alpine:3.11
-WORKDIR /usr/bin
-COPY --from=build /go/bin .
+FROM alpine:3.18
+WORKDIR /app
+COPY --from=build /app/app .
+RUN mkdir -p configs
 EXPOSE 8080
-CMD ["app"]
+CMD ["./app"]

@@ -17,13 +17,13 @@ type Order {
     id: String!
     products: [OrderedProduct!]!
     totalPrice: Float!
-    CreatedAt: Time!
+    createdAt: Time! 
 }
 
 type OrderedProduct {
     id: String!
     name: String!
-    description: String
+    description: String!
     price: Float!
     quantity: Int!
 }
